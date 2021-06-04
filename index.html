@@ -40,7 +40,7 @@
             Weapon refining not implement yet.
           </span>
         </div>
-        <table class="table">
+        <table id="refineTable" class="table">
           <tbody>
             <tr>
               <td>+5</td>
@@ -171,6 +171,7 @@
       var myTableDiv = document.getElementById("ratio");
       var table = document.createElement('table');
       table.classList = 'table'
+      table.id = 'ratioTable'
 
       var tableHead = document.createElement('thead');
       table.appendChild(tableHead);
@@ -210,7 +211,7 @@
         tr.appendChild(td2);
       }
 
-      var oldTable = document.querySelector('table')
+      var oldTable = document.querySelector('#ratioTable')
 
       if (oldTable) {
         myTableDiv.replaceChild(table, oldTable);
