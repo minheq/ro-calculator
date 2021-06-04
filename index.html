@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title></title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.2/css/bulma.min.css">
+
+  <style>
+    body {
+      padding: 16px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <form onsubmit="return handleSubmit(event)">
+      <div>
+        <div>
+          <label>
+            Item type
+          </label>
+        </div>
+        <div class="select">
+          <select id="item-type">
+            <option value="armor">Armor</option>
+            <option disabled value="weapon1">Level 1 Weapon</option>
+            <option disabled value="weapon2">Level 2 Weapon</option>
+            <option disabled value="weapon3">Level 3 Weapon</option>
+            <option disabled value="weapon4">Level 4 Weapon</option>
+          </select>
+        </div>
+      </div>
+      <div style="height:16px;"></div>
+      <div>
+        <label>
+          Current Refinement
+          <input value="4" id="current" class="input" max="9" min="0" type="number" />
+        </label>
+      </div>
+      <div style="height:4px;"></div>
+      <span class="has-text-danger" id="current-error"></span>
+      <div style="height:16px;"></div>
+      <div>
+        <label>
+          Desired Refinement
+          <input value="9" id="desired" class="input" max="10" type="number" />
+        </label>
+      </div>
+      <div style="height:4px;"></div>
+      <span class="has-text-danger" id="desired-error"></span>
+      <div style="height:16px;"></div>
+      <div>
+        <label>
+          Normal Elunium Cost (Optional)
+          <input value="25000" id="elunium" class="input" type="number" />
+        </label>
+      </div>
+      <div style="height:16px;"></div>
+      <input type="submit" class="button is-primary" value="Roll!"></button>
+    </form>
+    <div style="height:16px;"></div>
+    <div id="result">
+      <div>
+        <span id="refiningFee">
+
+        </span>
+      </div>
+      <div>
+        <span id="normalOreUsed">
+
+        </span>
+      </div>
+      <div>
+        <span id="purifiedOreUsed">
+
+        </span>
+      </div>
+      <div>
+        <span id="totalCost">
+
+        </span>
+      </div>
+      <div id="ratio"></div>
+    </div>
+  </div>
+  <script>
+    function handleSubmit(event) {
+      event.preventDefault()
+      var itemType = document.querySelector('#item-type').value
+      var currentRefinementLevel = Number(document.querySelector('#current').value)
+      var desiredRefinementLevel = Number(document.querySelector('#desired').value)
+      var eluniumCost = Number(document.querySelector('#elunium').value)
+      var currentErrorNode = document.querySelector('#current-error')
+      var desiredErrorNode = document.querySelector('#desired-error')
+
+      let hasError = false;
+      if (!currentRefinementLevel) {
+        currentErrorNode.textContent = "Enter current refinement"
+        hasError = true
+      }
+
+      if (!desiredRefinementLevel) {
+        desiredErrorNode.textContent = "Enter desired refinement"
+        hasError = true
+      }
+
+      if (desiredRefinementLevel <= currentRefinementLevel) {
+        desiredErrorNode.textContent = "Enter desired refinement that is higher than current refinement"
+        hasError = true
+      }
+
+      if (hasError) {
+        return false;
+      }
+
+      currentErrorNode.textContent = ""
+      desiredErrorNode.textContent = ""
+
+      var result = calculate(itemType, currentRefinementLevel, desiredRefinementLevel, eluniumCost)
+
+      var refiningFeeNode = document.querySelector('#refiningFee')
+      var refiningFee = result.refiningFee
+      refiningFeeNode.textContent = `${refiningFee.toLocaleString()}Z refining fee`
+      var normalOreUsedNode = document.querySelector('#normalOreUsed')
+      var normalOreUsed = result.normalOreUsed
+      normalOreUsedNode.textContent = `${normalOreUsed} elunium used`
+      var purifiedOreUsedNode = document.querySelector('#purifiedOreUsed')
+      var purifiedOreUsed = result.purifiedOreUsed
+      purifiedOreUsedNode.textContent = `${purifiedOreUsed} purified elunium used`
+
+      var totalCostNode = document.querySelector('#totalCost')
+      var totalCost = result.totalCost
+      totalCostNode.textContent = `${totalCost.toLocaleString()}Z spent in total`
+
+      var ratio = result.ratio
+      addTable(ratio)
+    }
+
+    function addTable(ratio) {
+      var myTableDiv = document.getElementById("ratio");
+      var table = document.createElement('table');
+      table.classList = 'table'
+
+      var tableHead = document.createElement('thead');
+      table.appendChild(tableHead);
+
+      var tr = document.createElement('tr');
+      tableHead.appendChild(tr);
+
+      var td = document.createElement('td');
+      td.appendChild(document.createTextNode(`Refine`));
+      tr.appendChild(td);
+
+      var td1 = document.createElement('td');
+      td1.appendChild(document.createTextNode('Succeeded'));
+      tr.appendChild(td1);
+
+      var td2 = document.createElement('td');
+      td2.appendChild(document.createTextNode('Failed'));
+      tr.appendChild(td2);
+
+      var tableBody = document.createElement('tbody');
+      table.appendChild(tableBody);
+
+      for (var i = 5; i <= 10; i++) {
+        var tr = document.createElement('tr');
+        tableBody.appendChild(tr);
+
+        var td = document.createElement('td');
+        td.appendChild(document.createTextNode(`+${i}`));
+        tr.appendChild(td);
+
+        var td1 = document.createElement('td');
+        td1.appendChild(document.createTextNode(ratio[i].succeeded));
+        tr.appendChild(td1);
+
+        var td2 = document.createElement('td');
+        td2.appendChild(document.createTextNode(ratio[i].failed));
+        tr.appendChild(td2);
+      }
+
+      var oldTable = document.querySelector('table')
+
+      if (oldTable) {
+        myTableDiv.replaceChild(table, oldTable);
+      } else {
+        myTableDiv.appendChild(table);
+      }
+    }
+
+    var weapon4 = {
+      1: 1,
+      2: 1,
+      3: 1,
+      4: 1,
+      5: 0.6,
+      6: 0.4,
+      7: 0.4,
+      8: 0.2,
+      9: 0.2,
+      10: 0.09,
+    }
+
+    var armor = {
+      1: 1,
+      2: 1,
+      3: 1,
+      4: 1,
+      5: 0.6,
+      6: 0.4,
+      7: 0.4,
+      8: 0.2,
+      9: 0.2,
+      10: 0.09,
+    }
+
+    var itemTypeSuccessRateTables = {
+      weapon1: {},
+      weapon2: {},
+      weapon3: {},
+      weapon4: weapon4,
+      armor: armor,
+    }
+
+    function calculate(itemType, currentRefinementLevel, desiredRefinementLevel, eluniumCost) {
+      var itemRefinementSuccessRate = itemTypeSuccessRateTables[itemType]
+      var current = currentRefinementLevel;
+      var refiningFee = 0;
+      var purifiedOreUsed = 0;
+      var normalOreUsed = 0;
+
+      var ratio = {
+        5: { succeeded: 0, failed: 0 },
+        6: { succeeded: 0, failed: 0 },
+        7: { succeeded: 0, failed: 0 },
+        8: { succeeded: 0, failed: 0 },
+        9: { succeeded: 0, failed: 0 },
+        10: { succeeded: 0, failed: 0 },
+      }
+
+      while (current !== desiredRefinementLevel) {
+        var next = current + 1;
+        var chance = itemRefinementSuccessRate[next]
+
+        if (chance === 1) {
+          normalOreUsed += 1
+          refiningFee += next * 7500;
+          current += 1
+          continue;
+        }
+
+        purifiedOreUsed += 1
+        refiningFee += next * 30000;
+
+        var roll = Math.random().toFixed(2);
+
+        if (roll < chance) {
+          ratio[next].succeeded += 1;
+          current = next;
+        } else {
+          ratio[next].failed += 1;
+          current -= 1
+        }
+      }
+
+      var totalEluniumCost = normalOreUsed * eluniumCost + (purifiedOreUsed * 10 * eluniumCost)
+      var totalCost = refiningFee + totalEluniumCost
+      return { refiningFee, normalOreUsed, purifiedOreUsed, ratio, totalCost }
+    }
+  </script>
+
+</body>
+
+</html>
