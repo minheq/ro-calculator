@@ -271,10 +271,7 @@
       var tableBody = document.createElement('tbody');
       table.appendChild(tableBody);
 
-      for (var i = currentRefinementLevel; i <= desiredRefinementLevel; i++) {
-        if (i === 0) {
-          continue;
-        }
+      for (var i = 4; i <= 10; i++) {
         var tr = document.createElement('tr');
         tableBody.appendChild(tr);
 
