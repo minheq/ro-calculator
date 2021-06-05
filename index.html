@@ -89,64 +89,67 @@
         </label>
       </div>
       <div style="height:16px;"></div>
-      <input type="submit" class="button is-primary is-fullwidth" value="Roll!"></button>
-    </form>
-    <div style="height:16px;"></div>
-    <div id="result">
-      <div id="ratio"></div>
+      <input id="button-first" type="submit" class="button is-primary is-fullwidth" value="Roll!"></button>
       <div style="height:16px;"></div>
-      <div class="card">
-        <div class="card-content">
+      <div id="result">
+        <div id="ratio"></div>
+        <div style="height:16px;"></div>
+        <input id="button-second" type="submit" style="display:none;" class="button is-primary is-fullwidth"
+          value="Roll!"></button>
+        <div style="height:16px;"></div>
+        <div class="card">
+          <div class="card-content">
 
-          <div>
-            <span id="refiningFee">
+            <div>
+              <span id="refiningFee">
 
-            </span>
-          </div>
-          <div>
-            <span id="normalOreUsed">
+              </span>
+            </div>
+            <div>
+              <span id="normalOreUsed">
 
-            </span>
-          </div>
-          <div>
-            <span id="purifiedOreUsed">
+              </span>
+            </div>
+            <div>
+              <span id="purifiedOreUsed">
 
-            </span>
-          </div>
-          <div>
-            <span id="totalCost">
+              </span>
+            </div>
+            <div>
+              <span id="totalCost">
 
-            </span>
+              </span>
+            </div>
           </div>
         </div>
+    </form>
+  </div>
+  <div style="height:16px;"></div>
+  <div class="card">
+    <div class="card-content">
+      <div>
+        <span id="tries">
+        </span>
+      </div>
+      <div>
+        <span id="averagePurifiedEluniumUsed">
+        </span>
+      </div>
+      <div>
+        <span id="averageTotalCost">
+        </span>
+      </div>
+      <div>
+        <span id="chanceBelowPurifiedElunium">
+        </span>
       </div>
     </div>
-    <div style="height:16px;"></div>
-    <div class="card">
-      <div class="card-content">
-        <div>
-          <span id="tries">
-          </span>
-        </div>
-        <div>
-          <span id="averagePurifiedEluniumUsed">
-          </span>
-        </div>
-        <div>
-          <span id="averageTotalCost">
-          </span>
-        </div>
-        <div>
-          <span id="chanceBelowPurifiedElunium">
-          </span>
-        </div>
-      </div>
-    </div>
-    <div style="height:16px;"></div>
-    <div style="display: flex; align-items: center;">
-      <img style="width: 32px;height: 32px;margin-right: 4px;" src="niat-logo.png" />
-      <span>Made by Niat</span>
-    </div>
+  </div>
+  <div style="height:16px;"></div>
+  <div style="display: flex; align-items: center;">
+    <img style="width: 32px;height: 32px;margin-right: 4px;" src="niat-logo.png" />
+    <span>Made by Niat</span>
+  </div>
   </div>
   <script>
     var tries = 0;
@@ -154,11 +157,20 @@
     var allTotalCost = 0;
     var prevCurrentRefinementLevel = null
     var prevDesiredRefinementLevel = null
-    var chanceBelowPurifiedEluniumCount = 100
     var chanceBelowPurifiedEluniumSuccess = 0
+
+    var CHANCE_BELOW_PURIFIED_ELU_COUNT = 100
 
     function handleSubmit(event) {
       event.preventDefault()
+
+      calculateAndDisplay()
+      // for (let i = 0; i < 1000; i++) {
+      //   calculateAndDisplay()
+      // }
+    }
+
+    function calculateAndDisplay() {
       var itemType = "armor"
       // var itemType = document.querySelector('#item-type').value
       var currentRefinementLevel = Number(document.querySelector('#current').value)
@@ -246,7 +258,7 @@
       var averagePurifiedEluniumUsed = allTotalPurifiedEluniumUsed / tries
       var averageTotalCost = allTotalCost / tries
 
-      if (purifiedOreUsed <= chanceBelowPurifiedEluniumCount) {
+      if (purifiedOreUsed <= CHANCE_BELOW_PURIFIED_ELU_COUNT) {
         chanceBelowPurifiedEluniumSuccess += 1;
       }
 
@@ -255,7 +267,7 @@
       triesNode.innerHTML = `<b>${tries}</b> tries`
       averagePurifiedEluniumUsedNode.innerHTML = `<b>${Math.ceil(averagePurifiedEluniumUsed)}</b> average purified elunium used`
       averageTotalCostNode.innerHTML = `<b>${Number(averageTotalCost.toFixed(0)).toLocaleString()}z</b> average total cost`
-      chanceBelowPurifiedEluniumNode.innerHTML = `<b>${chanceBelowPurifiedEluniumChance.toFixed(1)}%</b> chance below ${chanceBelowPurifiedEluniumCount} purified elunium used`
+      chanceBelowPurifiedEluniumNode.innerHTML = `<b>${chanceBelowPurifiedEluniumChance.toFixed(1)}%</b> chance below ${CHANCE_BELOW_PURIFIED_ELU_COUNT} purified elunium used`
     }
 
     function addTable(ratio, currentRefinementLevel, desiredRefinementLevel) {
@@ -287,7 +299,7 @@
       var tableBody = document.createElement('tbody');
       table.appendChild(tableBody);
 
-      for (var i = 4; i <= 10; i++) {
+      for (var i = 4; i <= desiredRefinementLevel; i++) {
         var tr = document.createElement('tr');
         tableBody.appendChild(tr);
 
