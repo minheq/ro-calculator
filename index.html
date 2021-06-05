@@ -67,7 +67,7 @@
       <div>
         <label>
           Current Refine
-          <input value="4" id="current" class="input" max="9" min="0" type="number" />
+          <input value="0" id="current" class="input" max="9" min="0" type="number" />
         </label>
       </div>
       <div style="height:4px;"></div>
@@ -76,7 +76,7 @@
       <div>
         <label>
           Desired Refine
-          <input value="9" id="desired" class="input" max="10" type="number" />
+          <input value="10" id="desired" class="input" max="10" type="number" />
         </label>
       </div>
       <div style="height:4px;"></div>
@@ -183,7 +183,7 @@
       var trialsToggle = document.querySelector('#showTrialsToggle')
       trialsToggle.style = "display: block;"
       calculateAndDisplay()
-      // for (let i = 0; i < 1000; i++) {
+      // for (let i = 0; i < 10000; i++) {
       //   calculateAndDisplay()
       // }
     }
