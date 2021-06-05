@@ -92,10 +92,9 @@
       <input id="button-first" type="submit" class="button is-primary is-fullwidth" value="Roll!"></button>
       <div style="height:16px;"></div>
       <div id="result">
+        <a id="showTrialsToggle" style="display: none;" onclick="return handleToggleShowTrialDetails(event)"
+          class="has-text-link">Hide trial details</a>
         <div id="ratio"></div>
-        <div style="height:16px;"></div>
-        <input id="button-second" type="submit" style="display:none;" class="button is-primary is-fullwidth"
-          value="Roll!"></button>
         <div style="height:16px;"></div>
         <div class="card">
           <div class="card-content">
@@ -158,12 +157,31 @@
     var prevCurrentRefinementLevel = null
     var prevDesiredRefinementLevel = null
     var chanceBelowPurifiedEluniumSuccess = 0
-
     var CHANCE_BELOW_PURIFIED_ELU_COUNT = 100
+    var showTrialDetails = true;
+
+
+    function handleToggleShowTrialDetails(event) {
+      event.preventDefault()
+      var trialsToggle = document.querySelector('#showTrialsToggle')
+      var myTableDiv = document.getElementById("ratio");
+
+      showTrialDetails = !showTrialDetails;
+
+      if (showTrialDetails) {
+        trialsToggle.textContent = "Hide trial details"
+        myTableDiv.style = "display: block;"
+      } else {
+        trialsToggle.textContent = "Show trial details"
+        myTableDiv.style = "display: none;"
+      }
+    }
 
     function handleSubmit(event) {
       event.preventDefault()
 
+      var trialsToggle = document.querySelector('#showTrialsToggle')
+      trialsToggle.style = "display: block;"
       calculateAndDisplay()
       // for (let i = 0; i < 1000; i++) {
       //   calculateAndDisplay()
