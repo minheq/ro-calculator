@@ -136,6 +136,10 @@
           <span id="averageTotalCost">
           </span>
         </div>
+        <div>
+          <span id="chanceBelowPurifiedElunium">
+          </span>
+        </div>
       </div>
     </div>
     <div style="height:16px;"></div>
@@ -150,6 +154,8 @@
     var allTotalCost = 0;
     var prevCurrentRefinementLevel = null
     var prevDesiredRefinementLevel = null
+    var chanceBelowPurifiedEluniumCount = 100
+    var chanceBelowPurifiedEluniumSuccess = 0
 
     function handleSubmit(event) {
       event.preventDefault()
@@ -170,6 +176,7 @@
         allTotalCost = 0;
         prevCurrentRefinementLevel = currentRefinementLevel
         prevDesiredRefinementLevel = desiredRefinementLevel
+        chanceBelowPurifiedEluniumSuccess = 0
       }
 
       var eluniumCost = Number(document.querySelector('#elunium').value)
@@ -221,6 +228,7 @@
       var triesNode = document.querySelector('#tries')
       var averagePurifiedEluniumUsedNode = document.querySelector('#averagePurifiedEluniumUsed')
       var averageTotalCostNode = document.querySelector('#averageTotalCost')
+      var chanceBelowPurifiedEluniumNode = document.querySelector('#chanceBelowPurifiedElunium')
 
       tries += 1
 
@@ -237,9 +245,16 @@
       var averagePurifiedEluniumUsed = allTotalPurifiedEluniumUsed / tries
       var averageTotalCost = allTotalCost / tries
 
+      if (purifiedOreUsed <= chanceBelowPurifiedEluniumCount) {
+        chanceBelowPurifiedEluniumSuccess += 1;
+      }
+
+      var chanceBelowPurifiedEluniumChance = chanceBelowPurifiedEluniumSuccess / tries * 100
+
       triesNode.innerHTML = `<b>${tries}</b> tries`
       averagePurifiedEluniumUsedNode.innerHTML = `<b>${Math.ceil(averagePurifiedEluniumUsed)}</b> average purified elunium used`
       averageTotalCostNode.innerHTML = `<b>${Number(averageTotalCost.toFixed(0)).toLocaleString()}z</b> average total cost`
+      chanceBelowPurifiedEluniumNode.innerHTML = `<b>${chanceBelowPurifiedEluniumChance.toFixed(1)}%</b> chance below ${chanceBelowPurifiedEluniumCount} purified elunium used`
     }
 
     function addTable(ratio, currentRefinementLevel, desiredRefinementLevel) {
